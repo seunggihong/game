@@ -1,56 +1,70 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-let positionX = 0,
-  positionY = 0;
-const gridSize = 20,
-  tileCount = 20;
 
-window.onload = () => {
-  document.addEventListener("keydown", keyPush);
-  setInterval(game, 1000 / 15);
-};
+let x = canvas.clientWidth;
+let y = canvas.clientHeight;
 
-keyPush = (evt) => {
-  switch (evt.keyCode) {
-    case 37:
-      positionX += -1;
-      positionY += 0;
-      break;
-    case 38:
-      positionX += 0;
-      positionY += -1;
-      break;
-    case 39:
-      positionX += 1;
-      positionY += 0;
-      break;
-    case 40:
-      positionX += 0;
-      positionY += 1;
-      break;
-  }
-};
+const rectWidth = 10;
+const rectHeight = 5;
 
-game = () => {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "lime";
-  ctx.fillRect(
-    positionX * gridSize,
-    positionY * gridSize,
-    gridSize - 2,
-    gridSize - 2
-  );
-  if (positionX < 0) {
-    positionX = tileCount - 1;
+let rectX = 0;
+let rectY = 0;
+
+let rightPressed = false;
+let leftPressed = false;
+let upPressed = false;
+let downPressed = false;
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+function keyDownHandler(e) {
+  if (e.key == 37 || e.key == "ArrowRight") {
+    rightPressed = true;
+    console.log("r");
+  } else if (e.key == 39 || e.key == "ArrowLeft") {
+    leftPressed = true;
+    console.log("l");
+  } else if (e.key == 38 || e.key == "ArrowUp") {
+    upPressed = true;
+    console.log("u");
+  } else if (e.key == 40 || e.key == "ArrowDown") {
+    downPressed = true;
+    console.log("d");
   }
-  if (positionX > tileCount - 1) {
-    positionX = 0;
+}
+
+function keyUpHandler(e) {
+  if (e.key == 37 || e.key == "ArrowRight") {
+    rightPressed = false;
+  } else if (e.key == 39 || e.key == "ArrowLeft") {
+    leftPressed = false;
+  } else if (e.key == 38 || e.key == "ArrowUp") {
+    upPressed = false;
+  } else if (e.key == 40 || e.key == "ArrowDown") {
+    downPressed = false;
   }
-  if (positionY < 0) {
-    positionY = tileCount - 1;
+}
+
+function drawRect() {
+  ctx.fillStyle = "green";
+  ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawRect();
+
+  if (rightPressed && rectX < canvas.width - rectWidth) {
+    rectX += 5;
+  } else if (leftPressed && rectX > 0) {
+    rectX -= 5;
+  } else if (downPressed && rectY < canvas.height - rectHeight) {
+    rectY += 5;
+  } else if (upPressed && rectY > 0) {
+    rectY -= 5;
   }
-  if (positionY > tileCount - 1) {
-    positionY = 0;
-  }
-};
+}
+
+setInterval(draw, 1000 / 15);
